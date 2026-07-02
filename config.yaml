@@ -1,0 +1,40 @@
+username: YOUR_USERNAME_HERE
+api_key: YOUR_KEY_HERE
+web_base: 'https://danbooru.donmai.us/'
+browser: 'firefox' # See https://docs.python.org/3/library/webbrowser.html for list of browsers. 
+page_launch_type: new_tab # new_window | new_tab
+
+saved_searches:
+  example: # This is the name of your search that you will use when calling dbutil
+    description: "Feel free to describe your search" # (Optional) A helpful reminder to you what this search does.
+    # range_type describes a range that will be specified for the search.   
+      # - none: No range is specified, the entirety of the site will be used.
+      # - after: The search will only display posts posted after the youngest post in the subset
+      # - before: The search will only display posts posted before the oldest post in the subset
+      # - within: The search will only display posts posted between the oldest and youngest posts of the subset
+    range_type: "after" # (Required)
+    subset_type: "favgroup" # or "favorites" if the subset is the favorites list for your account. Required if range_type is not "none".
+    favgroup_id: 1234 # Required if subset_type is "favgroup"
+    saved_terms: "term_1 term_2" # (Optional) Additional terms that will always be added to this search
+    direction: youngest_first # (Optional) youngest_first | oldest_first. Defaults to youngest first.
+
+    # Suppose favgroup:1234 contains the posts {5, 6, 10, 8}.
+    # When ran, this example will launch danbooru with the following search terms;
+    # id:>10 term_1 term_2
+
+  launch:
+    description: "Launches the front page of Danbooru"
+    range_type: "none"
+
+  browse_new:
+    description: "See what's new on danbooru from where you left off."
+    range_type: "after"
+    subset_type: "favorites"
+    direction: oldest_first # Allows you to continue browsing with no breaks!
+
+  browse_old:
+    description: "Browsing danbooru after your favorites."
+    range_type: "before"
+    subset_type: "favorites"
+    saved_terms: "-status:banned"
+    direction: youngest_first
