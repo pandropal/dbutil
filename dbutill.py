@@ -37,7 +37,6 @@ class Browser:
     self.browser_str: str = browser_str
     self.page_launch_type: str = page_launch_type
     self.browser = webbrowser
-    self.browser.register(self.browser_str)
 
   def launch(self, url: str) -> None:
     if self.page_launch_type == "new_window":
@@ -122,18 +121,19 @@ async def compose_search_range(subset_tag: str, range_type) -> str:
 
 async def process(saved_search: dict) -> None:
   "Takes in a saved search, prepares it, and launches it in a web browser."
-  # TODO
-  search_range = await compose_search_range(
-    saved_search["subset"],
-    saved_search["range_type"]
-  )
 
-  saved_search["search_terms"].append(search_range)
+  if "subset" in saved_search:
+    search_range = await compose_search_range(
+      saved_search["subset"],
+      saved_search["range_type"]
+    )
+
+    saved_search["search_terms"].append(search_range)
 
   if saved_search["direction"] == "oldest_first":
     saved_search["search_terms"].append("order:id")
   
-  tag_str = utils.compose_tag_str(saved_search["search_terms"])
+  tag_str = utils.compose_tag_str(*saved_search["search_terms"])
 
   site_url = utils.construct_tagged_url(
     POST_URL_BASE,
@@ -146,6 +146,9 @@ async def process(saved_search: dict) -> None:
 def test_and_prep_saved_search(saved_search: dict) -> None:
   "Runs a series of assertions to ensure the saved search provided is legal."
   assert saved_search["range_type"], "range_type not defined"
+
+  if "direction" not in saved_search:
+      saved_search["direction"] = "youngest_first"
 
   if saved_search["range_type"] != "none":
     # asserts either favgroup or favorites
@@ -181,19 +184,18 @@ def test_and_prep_saved_search(saved_search: dict) -> None:
       )
     
     # Ensures direction is legal.
-    if "direction" not in saved_search:
-      saved_search["direction"] = "youngest_first"
-    
     assert saved_search["direction"] in [
       "youngest_first",
       "oldest_first"
     ], "direction is not defined properly."
+  else:
+    saved_search["search_terms"] = []
 
 def main() -> None:
   "E.G. python dbutil.py launch [search_tag_1] [search_tag_2]..."
 
   # Assert enough parameters have been provided
-  assert len(sys.argv) > 2, f"Incorrect usage. Try {main.__doc__}"
+  assert len(sys.argv) > 1, f"Incorrect usage. Try {main.__doc__}"
 
   # parse the arguments
   search_search_key = sys.argv[1]
@@ -215,8 +217,8 @@ def main() -> None:
       f"The saved_search chosen was found, but failed with the status: {str(e)}"
     )
 
-  # adds terms passed by parameters to the saved_terms list.
-  saved_search["saved_terms"] = saved_search["saved_terms"] + tag_strings 
+  # adds terms passed by parameters to the search_terms list.
+  saved_search["search_terms"] = saved_search["search_terms"] + tag_strings 
   
   # Launch command
   asyncio.run(process(saved_search))
