@@ -67,6 +67,10 @@ async def get_most_recent_post_id(tag_str: str) -> int:
   except json.decoder.JSONDecodeError as e:
     print(f"There was a problem loading the results from {url}")
     raise e
+  except AttributeError:
+    raise Warning(
+      f"json data failed to load: {response}"
+    )
 
   # If results exist, return the first image id, else, return 0
   for image in image_set:
@@ -97,7 +101,7 @@ async def compose_search_range(subset_tag: str, range_type) -> str:
 
     id = await fetch_id_task
     return f"id:<{id}"
-  elif range_type == "between":
+  elif range_type == "within":
     max_id_task = asyncio.create_task(
       get_most_recent_post_id(
         subset_tag

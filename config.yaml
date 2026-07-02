@@ -1,6 +1,6 @@
 username: YOUR_USERNAME_HERE
 api_key: YOUR_KEY_HERE
-web_base: 'https://danbooru.donmai.us/'
+web_base: 'https://danbooru.donmai.us'
 browser: 'firefox' # See https://docs.python.org/3/library/webbrowser.html for list of browsers. 
 page_launch_type: new_tab # new_window | new_tab
 

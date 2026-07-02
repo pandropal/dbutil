@@ -14,6 +14,8 @@ def fetch(url: str, auth: HTTPBasicAuth) -> Response:
     response.raise_for_status()
   except exceptions.RequestException as e:
     raise e
+  
+  return response
 
 def compose_tag_str(*tags:list[str]) -> str:
   "Combines multiple tags into a single tag string"
