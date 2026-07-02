@@ -38,3 +38,8 @@ saved_searches:
     subset_type: "favorites"
     saved_terms: "-status:banned"
     direction: youngest_first
+
+  safe_search:
+    description: "Provide your own search terms to search within your maxims"
+    range_type: within
+    subset_type: favorites
